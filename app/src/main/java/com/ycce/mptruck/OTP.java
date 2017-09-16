@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -67,7 +66,7 @@ public class OTP extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
-
+       
         // Restore instance state
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
@@ -77,8 +76,8 @@ public class OTP extends AppCompatActivity implements
         mPhoneNumberViews = (ViewGroup) findViewById(R.id.phone_auth_fields);
         mSignedInViews = (ViewGroup) findViewById(R.id.signed_in_buttons);
 
-       // mStatusText = (TextView) findViewById(R.id.status);
-        //mDetailText = (TextView) findViewById(R.id.detail);
+        mStatusText = (TextView) findViewById(R.id.status);
+        mDetailText = (TextView) findViewById(R.id.detail);
 
         mPhoneNumberField = (EditText) findViewById(R.id.field_phone_number);
         mVerificationField = (EditText) findViewById(R.id.field_verification_code);
@@ -297,25 +296,25 @@ public class OTP extends AppCompatActivity implements
                 // Initialized state, show only the phone number field and start button
                 enableViews(mStartButton, mPhoneNumberField);
                 disableViews(mVerifyButton, mResendButton, mVerificationField);
-                //mDetailText.setText(null);
+                mDetailText.setText(null);
                 break;
             case STATE_CODE_SENT:
                 // Code sent state, show the verification field, the
                 enableViews(mVerifyButton, mResendButton, mPhoneNumberField, mVerificationField);
                 disableViews(mStartButton);
-                Toast.makeText(this,R.string.status_code_sent,Toast.LENGTH_LONG);
+                mDetailText.setText(R.string.status_code_sent);
                 break;
             case STATE_VERIFY_FAILED:
                 // Verification has failed, show all options
                 enableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
                         mVerificationField);
-                Toast.makeText(this,R.string.status_verification_failed,Toast.LENGTH_LONG);
+                mDetailText.setText(R.string.status_verification_failed);
                 break;
             case STATE_VERIFY_SUCCESS:
                 // Verification has succeeded, proceed to firebase sign in
                 disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
                         mVerificationField);
-               Toast.makeText(this,R.string.status_verification_succeeded,Toast.LENGTH_LONG);
+                mDetailText.setText(R.string.status_verification_succeeded);
 
                 // Set the verification text based on the credential
                 if (cred != null) {
@@ -329,7 +328,7 @@ public class OTP extends AppCompatActivity implements
                 break;
             case STATE_SIGNIN_FAILED:
                 // No-op, handled by sign-in check
-                Toast.makeText(this,R.string.status_sign_in_failed,Toast.LENGTH_LONG);
+                mDetailText.setText(R.string.status_sign_in_failed);
                 break;
             case STATE_SIGNIN_SUCCESS:
                 // Np-op, handled by sign-in check
@@ -341,7 +340,7 @@ public class OTP extends AppCompatActivity implements
             mPhoneNumberViews.setVisibility(View.VISIBLE);
             mSignedInViews.setVisibility(View.GONE);
 
-            Toast.makeText(this,R.string.signed_out,Toast.LENGTH_LONG);;
+            mStatusText.setText(R.string.signed_out);;
         } else {
             // Signed in
             mPhoneNumberViews.setVisibility(View.GONE);
@@ -351,8 +350,8 @@ public class OTP extends AppCompatActivity implements
             mPhoneNumberField.setText(null);
             mVerificationField.setText(null);
 
-            Toast.makeText(this,R.string.signed_in,Toast.LENGTH_LONG);
-            Toast.makeText(this,getString(R.string.firebase_status_fmt, user.getUid()),Toast.LENGTH_LONG);
+            mStatusText.setText(R.string.signed_in);
+            mDetailText.setText(getString(R.string.firebase_status_fmt, user.getUid()));
         }
     }
 
